@@ -3,6 +3,7 @@
 import { Client, Account, Databases, Users } from "node-appwrite";
 import { cookies } from "next/headers";
 
+// Create a session-based Appwrite client
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -11,7 +12,7 @@ export async function createSessionClient() {
   const session = cookies().get("appwrite-session");
 
   if (!session || !session.value) {
-    throw new Error("No session");
+    throw new Error("No session found. Please log in.");
   }
 
   client.setSession(session.value);
@@ -23,6 +24,7 @@ export async function createSessionClient() {
   };
 }
 
+// Create an admin Appwrite client
 export async function createAdminClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -41,4 +43,3 @@ export async function createAdminClient() {
     }
   };
 }
-

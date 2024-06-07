@@ -28,14 +28,18 @@ export const createFundingSource = async (
   options: CreateFundingSourceOptions
 ) => {
   try {
-    return await dwollaClient
-      .post(`customers/${options.customerId}/funding-sources`, {
+    const response = await dwollaClient.post(
+      `customers/${options.customerId}/funding-sources`,
+      {
         name: options.fundingSourceName,
         plaidToken: options.plaidToken,
-      })
-      .then((res) => res.headers.get("location"));
+      }
+    );
+
+    return response.headers.get("location");
   } catch (err) {
     console.error("Creating a Funding Source Failed: ", err);
+    throw new Error("Creating a Funding Source Failed");
   }
 };
 
@@ -48,6 +52,7 @@ export const createOnDemandAuthorization = async () => {
     return authLink;
   } catch (err) {
     console.error("Creating an On Demand Authorization Failed: ", err);
+    throw new Error("Creating an On Demand Authorization Failed");
   }
 };
 
@@ -55,11 +60,11 @@ export const createDwollaCustomer = async (
   newCustomer: NewDwollaCustomerParams
 ) => {
   try {
-    return await dwollaClient
-      .post("customers", newCustomer)
-      .then((res) => res.headers.get("location"));
+    const response = await dwollaClient.post("customers", newCustomer);
+    return response.headers.get("location");
   } catch (err) {
     console.error("Creating a Dwolla Customer Failed: ", err);
+    throw new Error("Creating a Dwolla Customer Failed");
   }
 };
 
@@ -83,11 +88,11 @@ export const createTransfer = async ({
         value: amount,
       },
     };
-    return await dwollaClient
-      .post("transfers", requestBody)
-      .then((res) => res.headers.get("location"));
+    const response = await dwollaClient.post("transfers", requestBody);
+    return response.headers.get("location");
   } catch (err) {
     console.error("Transfer fund failed: ", err);
+    throw new Error("Transfer fund failed");
   }
 };
 
@@ -109,6 +114,7 @@ export const addFundingSource = async ({
     };
     return await createFundingSource(fundingSourceOptions);
   } catch (err) {
-    console.error("Transfer fund failed: ", err);
+    console.error("Adding funding source failed: ", err);
+    throw new Error("Adding funding source failed");
   }
 };

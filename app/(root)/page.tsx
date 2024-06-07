@@ -8,16 +8,35 @@ import { getLoggedInUser } from '@/lib/actions/user.actions';
 const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
+
+  if (!loggedIn) {
+    // Handle the case where the user is not logged in
+    return (
+      <section className="home">
+        <div className="home-content">
+          <header className="home-header">
+            <HeaderBox 
+              type="greeting"
+              title="Welcome"
+              user="Guest"
+              subtext="Please log in to access and manage your account and transactions."
+            />
+          </header>
+        </div>
+      </section>
+    );
+  }
+
   const accounts = await getAccounts({ 
     userId: loggedIn.$id 
-  })
+  });
 
   if(!accounts) return;
-  
+
   const accountsData = accounts?.data;
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
 
-  const account = await getAccount({ appwriteItemId })
+  const account = await getAccount({ appwriteItemId });
 
   return (
     <section className="home">
@@ -51,7 +70,7 @@ const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
         banks={accountsData?.slice(0, 2)}
       />
     </section>
-  )
+  );
 }
 
-export default Home
+export default Home;
